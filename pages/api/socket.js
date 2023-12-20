@@ -13,7 +13,16 @@ const SocketHandler = (req, res) => {
         res.socket.server.io = io;
         io.on('connection', (socket) => {
             console.log("Server is connected", socket.id);
+
+            socket?.emit('join-room' ,(roomid , userid)=>{
+                console.log("joined room");
+                socket.join(roomid);
+                socket.broadcast.to(roomid).emit('user-connected' , userid);
+                console.log("user connected" , userid);
+
+            });
         });
+
     }
 
     res.end();

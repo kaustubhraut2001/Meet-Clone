@@ -1,17 +1,20 @@
 import {useState , useEffect, useRef} from "react";
 // import peer from "peerjs" -> we mode this to use Eeffect
-
+import {useSocket} from "../context/socket";
+import { useRouter } from "next/router";
 
 
 const usePeer = () =>{
 	const [peer, setPeer] = useState(null);
 	const[id , setId] = useState();
+	const roomid = useRouter().query?.roomid;
 
+	const socket = useSocket();
 	const isPeerset = useRef(false);
 
 
 	useEffect(()=>{
-		if(isPeerset.current)
+		if(isPeerset.current || roomid || socket)
 			{
 				return;
 
@@ -33,11 +36,12 @@ const usePeer = () =>{
 				console.log(`Peer id is ${id}`);
 
 				setId(id);
+				socket?.emit('join-room' , roomid , id);
 			});
 
 		})()
 
-	}, [])
+	}, [roomid , socket])
 	return {peer , id};
 }
 
